@@ -46,5 +46,6 @@ def run():
 
 
 if __name__ == "__main__":
+    HEARTBEAT_PV.put(0)
     while True:
         run()
