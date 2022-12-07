@@ -57,21 +57,25 @@ class SELCavity(Cavity):
             sleep(1)
         return self.selAmplitudeActPV.get()
     
-    def straighten_cheeto(self):
+    def straighten_cheeto(self) -> bool:
+        """
+        :return: True if wanted to take a step larger than MAX_STEP
+        """
         if self.aact <= 1:
             return
         
-        chisum = 0
         startVal = self.sel_phase_offset
         iwf = self.i_waveform
         qwf = self.q_waveform
         large_step = False
         
         [slop, inter] = stats.siegelslopes(iwf, qwf)
-        for nn, yy in enumerate(iwf):
-            chisum += (yy - (slop * iwf[nn] + inter)) ** 2 / (slop * iwf[nn] + inter)
         
         if not np.isnan(slop):
+            chisum = 0
+            for nn, yy in enumerate(iwf):
+                chisum += (yy - (slop * iwf[nn] + inter)) ** 2 / (slop * iwf[nn] + inter)
+            
             step = slop * MULT
             if abs(step) > MAX_STEP:
                 step = MAX_STEP * np.sign(step)
@@ -94,6 +98,9 @@ class SELCavity(Cavity):
             
             self.sel_poff_pv.put(startVal + step)
             return large_step
+        
+        else:
+            print(f"{self} slope is NaN, skipping")
 
 
 SEL_CRYOMODULES: Dict[str, Cryomodule] = CryoDict(cavityClass=SELCavity)

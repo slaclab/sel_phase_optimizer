@@ -31,7 +31,7 @@ def run():
         cm_obj: Cryomodule = SEL_CRYOMODULES[cm_name]
         num_large_steps = 0
         for cav_obj in cm_obj.cavities.values():
-            num_large_steps += 1 if cav_obj.straighten_cheeto() else 0
+            num_large_steps += (1 if cav_obj.straighten_cheeto() else 0)
         if num_large_steps > 5:
             print(f"\033[91mPhase change limited to 5 deg {num_large_steps} times."
                   f" Re-running program.\033[0m")
