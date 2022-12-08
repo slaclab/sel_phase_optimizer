@@ -29,8 +29,11 @@ class SELCavity(Cavity):
     def sel_phase_offset(self):
         while not self.sel_poff_pv.connect():
             print(f"waiting for {self._sel_poff_pv.pvname} to connect")
-            sleep(1)
-        return self._sel_poff_pv.get()
+            sleep(0.1)
+        val = self._sel_poff_pv.get()
+        while val is None:
+            val = self._sel_poff_pv.get()
+        return val
     
     @property
     def i_waveform(self):
@@ -38,8 +41,12 @@ class SELCavity(Cavity):
             self._i_waveform_pv = PV(self.pvPrefix + "CTRL:IWF")
         while not self._i_waveform_pv.connect():
             print(f"waiting for {self._i_waveform_pv.pvname} to connect")
-            sleep(1)
-        return self._i_waveform_pv.get()
+            sleep(0.1)
+        
+        val = self._i_waveform_pv.get()
+        while val is None:
+            val = self._i_waveform_pv.get()
+        return val
     
     @property
     def q_waveform(self):
@@ -47,15 +54,23 @@ class SELCavity(Cavity):
             self._q_waveform_pv = PV(self.pvPrefix + "CTRL:QWF")
         while not self._q_waveform_pv.connect():
             print(f"waiting for {self._q_waveform_pv.pvname} to connect")
-            sleep(1)
-        return self._q_waveform_pv.get()
+            sleep(0.1)
+        
+        val = self._q_waveform_pv.get()
+        while val is None:
+            val = self._q_waveform_pv.get()
+        return val
     
     @property
     def aact(self) -> float:
         while not self.selAmplitudeActPV.connect():
             print(f"Waiting for {self.selAmplitudeActPV.pvname} to connect")
             sleep(1)
-        return self.selAmplitudeActPV.get()
+        
+        val = self.selAmplitudeActPV.get()
+        while val is None:
+            val = self.selAmplitudeActPV.get()
+        return val
     
     def straighten_cheeto(self) -> bool:
         """
@@ -82,6 +97,7 @@ class SELCavity(Cavity):
                 prefix = '\033[91m'
                 suffix = '\033[0m'
                 large_step = True
+                print(f"{prefix}Large step taken{suffix}")
             else:
                 prefix = ''
                 suffix = ''
@@ -94,7 +110,7 @@ class SELCavity(Cavity):
             print("\t", "old:", f"{startVal:7.2f}")
             print("\t", "new:", f"{startVal + step:7.2f}")
             print("\t", "step:", f"{step:5.2f}")
-            print("\t", "chi^2", f"{chisum:.2g}")
+            print("\t", "chi^2", f"{chisum:.2g}\n")
             
             self.sel_poff_pv.put(startVal + step)
             return large_step
