@@ -27,22 +27,22 @@ def update_heartbeat(time_to_wait: int):
 
 
 def run():
+    num_large_steps = 0
     for cm_name in NON_HLS:
         cm_obj: Cryomodule = SEL_CRYOMODULES[cm_name]
-        num_large_steps = 0
         for cav_obj in cm_obj.cavities.values():
             num_large_steps += (1 if cav_obj.straighten_cheeto() else 0)
-        if num_large_steps > 5:
-            print(f"\033[91mPhase change limited to 5 deg {num_large_steps} times."
-                  f" Re-running program.\033[0m")
-            update_heartbeat(5)
-        else:
-            timi = time.localtime()
-            current_time = time.strftime("%m/%d/%y %H:%M:%S", timi)
-            print(f"\033[94mThanks for your help! The current date/time is {current_time}\033[0m")
-            print(f"Sleeping for 600 seconds")
-            print("")
-            update_heartbeat(600)
+    if num_large_steps > 5:
+        print(f"\033[91mPhase change limited to 5 deg {num_large_steps} times."
+              f" Re-running program.\033[0m")
+        update_heartbeat(5)
+    else:
+        timi = time.localtime()
+        current_time = time.strftime("%m/%d/%y %H:%M:%S", timi)
+        print(f"\033[94mThanks for your help! The current date/time is {current_time}\033[0m")
+        print(f"Sleeping for 600 seconds")
+        print("")
+        update_heartbeat(600)
 
 
 if __name__ == "__main__":
