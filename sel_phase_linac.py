@@ -106,12 +106,7 @@ class SELCavity(Cavity):
             elif startVal + step > 180:
                 step = step - 360
             
-#            print(f"{prefix}{self}{suffix}")
-#            print("\t", "old:", f"{startVal:7.2f}")
-#            print("\t", "new:", f"{startVal + step:7.2f}")
-#            print("\t", "step:", f"{step:5.2f}")
-#            print("\t", "chi^2", f"{chisum:.2g}\n")
-            print(f"{prefix}{self}{suffix}  old: {startVal:7.2f} new: {startVal+step:7.2f} step: {step:5.2f} chi^2: {chisum:.2g}")
+            print(f"{prefix}{self}{suffix}  step: {step:5.2f} chi^2: {chisum:.2g}")
             
             self.sel_poff_pv.put(startVal + step)
             return large_step
