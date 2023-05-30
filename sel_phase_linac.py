@@ -3,7 +3,8 @@ from typing import Dict
 
 import numpy as np
 from epics import PV
-from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule, Piezo, SSA, StepperTuner)
+from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule,
+                                                Piezo, SSA, StepperTuner)
 from scipy import stats
 
 MAX_STEP = 5
@@ -61,22 +62,13 @@ class SELCavity(Cavity):
             val = self._q_waveform_pv.get()
         return val
     
-    @property
-    def aact(self) -> float:
-        while not self.selAmplitudeActPV.connect():
-            print(f"Waiting for {self.selAmplitudeActPV.pvname} to connect")
-            sleep(1)
-        
-        val = self.selAmplitudeActPV.get()
-        while val is None:
-            val = self.selAmplitudeActPV.get()
-        return val
-    
     def straighten_cheeto(self) -> bool:
         """
         :return: True if wanted to take a step larger than MAX_STEP
         """
-        if self.aact <= 1:
+        
+        if (self.hw_mode_pv.get() != 0 or self.selAmplitudeActPV.severity == 3
+                or self.selAmplitudeActPV.get() <= 1):
             return
         
         startVal = self.sel_phase_offset
