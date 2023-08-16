@@ -8,7 +8,8 @@ Originally by J. Nelson, refactored by L. Zacarias
 import time
 
 from epics import PV
-from lcls_tools.superconducting.scLinac import (Cryomodule, L0B, L1B, L2B, L3B)
+from lcls_tools.superconducting.scLinac import Cryomodule
+from lcls_tools.superconducting.sc_linac_utils import (L0B, L1B, L2B, L3B)
 
 from sel_phase_linac import SEL_CRYOMODULES
 

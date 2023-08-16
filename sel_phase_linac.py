@@ -1,9 +1,10 @@
 from time import sleep
-from typing import Dict
+from typing import Dict, Optional
 
 import numpy as np
 from epics import PV
-from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule, Piezo, SSA, StepperTuner)
+from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule,
+                                                Piezo, SSA, StepperTuner)
 from scipy import stats
 
 MAX_STEP = 5
@@ -15,14 +16,14 @@ class SELCavity(Cavity):
                  stepperClass=StepperTuner, piezoClass=Piezo):
         super().__init__(cavityNum, rackObject, ssaClass,
                          stepperClass, piezoClass)
-        self._q_waveform_pv: PV = None
-        self._i_waveform_pv: PV = None
-        self._sel_poff_pv: PV = None
+        self._q_waveform_pv: Optional[PV] = None
+        self._i_waveform_pv: Optional[PV] = None
+        self._sel_poff_pv: Optional[PV] = None
     
     @property
     def sel_poff_pv(self) -> PV:
         if not self._sel_poff_pv:
-            self._sel_poff_pv = PV(self.pvPrefix + "SEL_POFF")
+            self._sel_poff_pv = PV(self.pv_addr("SEL_POFF"))
         return self._sel_poff_pv
     
     @property
@@ -38,7 +39,7 @@ class SELCavity(Cavity):
     @property
     def i_waveform(self):
         if not self._i_waveform_pv:
-            self._i_waveform_pv = PV(self.pvPrefix + "CTRL:IWF")
+            self._i_waveform_pv = PV(self.pv_addr("CTRL:IWF"))
         while not self._i_waveform_pv.connect():
             print(f"waiting for {self._i_waveform_pv.pvname} to connect")
             sleep(0.1)
@@ -51,7 +52,7 @@ class SELCavity(Cavity):
     @property
     def q_waveform(self):
         if not self._q_waveform_pv:
-            self._q_waveform_pv = PV(self.pvPrefix + "CTRL:QWF")
+            self._q_waveform_pv = PV(self.pv_addr("CTRL:QWF"))
         while not self._q_waveform_pv.connect():
             print(f"waiting for {self._q_waveform_pv.pvname} to connect")
             sleep(0.1)
@@ -61,23 +62,12 @@ class SELCavity(Cavity):
             val = self._q_waveform_pv.get()
         return val
     
-    @property
-    def aact(self) -> float:
-        while not self.selAmplitudeActPV.connect():
-            print(f"Waiting for {self.selAmplitudeActPV.pvname} to connect")
-            sleep(1)
-        
-        val = self.selAmplitudeActPV.get()
-        while val is None:
-            val = self.selAmplitudeActPV.get()
-        return val
-    
     def straighten_cheeto(self) -> bool:
         """
         :return: True if wanted to take a step larger than MAX_STEP
         """
         if self.aact <= 1:
-            return
+            return False
         
         startVal = self.sel_phase_offset
         iwf = self.i_waveform
