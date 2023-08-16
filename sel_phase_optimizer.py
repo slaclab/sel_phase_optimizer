@@ -9,7 +9,7 @@ import time
 
 from epics import PV
 from lcls_tools.superconducting.scLinac import Cryomodule
-from lcls_tools.superconducting.sc_linac_utils import (L0B, L1B, L2B, L3B)
+from lcls_tools.superconducting.sc_linac_utils import ALL_CRYOMODULES
 
 from sel_phase_linac import SEL_CRYOMODULES
 
