@@ -61,12 +61,14 @@ class SELCavity(Cavity):
         while val is None:
             val = self._q_waveform_pv.get()
         return val
-    
+
     def straighten_cheeto(self) -> bool:
         """
         :return: True if wanted to take a step larger than MAX_STEP
         """
-        if self.aact <= 1:
+
+        if (self.hw_mode_pv.get() != 0 or self.selAmplitudeActPV.severity == 3
+                or self.selAmplitudeActPV.get() <= 1):
             return False
         
         startVal = self.sel_phase_offset

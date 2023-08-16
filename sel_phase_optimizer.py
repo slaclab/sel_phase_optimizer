@@ -13,8 +13,6 @@ from lcls_tools.superconducting.sc_linac_utils import (L0B, L1B, L2B, L3B)
 
 from sel_phase_linac import SEL_CRYOMODULES
 
-NON_HLS = L0B + L1B + L2B + L3B
-
 HEARTBEAT_PV = PV("PHYS:SYS0:1:SC_SEL_PHAS_OPT_HEARTBEAT")
 
 
@@ -29,7 +27,7 @@ def update_heartbeat(time_to_wait: int):
 
 def run():
     num_large_steps = 0
-    for cm_name in NON_HLS:
+    for cm_name in ALL_CRYOMODULES:
         cm_obj: Cryomodule = SEL_CRYOMODULES[cm_name]
         for cav_obj in cm_obj.cavities.values():
             num_large_steps += (1 if cav_obj.straighten_cheeto() else 0)
