@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 
 import numpy as np
-from lcls_tools.common.pyepics_tools.pyepics_utils import PV
+from lcls_tools.common.controls.pyepics.utils import PV
 from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule,
                                                 Piezo, SSA, StepperTuner)
 from scipy import stats

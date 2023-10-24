@@ -7,7 +7,7 @@ Originally by J. Nelson, refactored by L. Zacarias
 
 import time
 
-from epics import PV
+from lcls_tools.common.controls.pyepics.utils import PV
 from lcls_tools.superconducting.scLinac import Cryomodule
 from lcls_tools.superconducting.sc_linac_utils import ALL_CRYOMODULES
 
