@@ -30,16 +30,20 @@ def run():
     for cm_name in ALL_CRYOMODULES:
         cm_obj: Cryomodule = SEL_CRYOMODULES[cm_name]
         for cav_obj in cm_obj.cavities.values():
-            num_large_steps += (1 if cav_obj.straighten_cheeto() else 0)
+            num_large_steps += 1 if cav_obj.straighten_cheeto() else 0
         update_heartbeat(1)
     if num_large_steps > 5:
-        print(f"\033[91mPhase change limited to 5 deg {num_large_steps} times."
-              f" Re-running program.\033[0m")
+        print(
+            f"\033[91mPhase change limited to 5 deg {num_large_steps} times."
+            f" Re-running program.\033[0m"
+        )
         update_heartbeat(5)
     else:
         timi = time.localtime()
         current_time = time.strftime("%m/%d/%y %H:%M:%S", timi)
-        print(f"\033[94mThanks for your help! The current date/time is {current_time}\033[0m")
+        print(
+            f"\033[94mThanks for your help! The current date/time is {current_time}\033[0m"
+        )
         print(f"Sleeping for 600 seconds")
         print("")
         update_heartbeat(600)

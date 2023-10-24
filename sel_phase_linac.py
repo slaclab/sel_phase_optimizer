@@ -2,8 +2,14 @@ from typing import Dict, Optional
 
 import numpy as np
 from lcls_tools.common.controls.pyepics.utils import PV
-from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule,
-                                                Piezo, SSA, StepperTuner)
+from lcls_tools.superconducting.scLinac import (
+    Cavity,
+    CryoDict,
+    Cryomodule,
+    Piezo,
+    SSA,
+    StepperTuner,
+)
 from scipy import stats
 
 MAX_STEP = 5
@@ -11,10 +17,15 @@ MULT = -51.0471
 
 
 class SELCavity(Cavity):
-    def __init__(self, cavityNum, rackObject, ssaClass=SSA,
-                 stepperClass=StepperTuner, piezoClass=Piezo):
-        super().__init__(cavityNum, rackObject, ssaClass,
-                         stepperClass, piezoClass)
+    def __init__(
+        self,
+        cavityNum,
+        rackObject,
+        ssaClass=SSA,
+        stepperClass=StepperTuner,
+        piezoClass=Piezo,
+    ):
+        super().__init__(cavityNum, rackObject, ssaClass, stepperClass, piezoClass)
         self._q_waveform_pv: Optional[PV] = None
         self._i_waveform_pv: Optional[PV] = None
         self._sel_poff_pv: Optional[PV] = None
@@ -59,18 +70,20 @@ class SELCavity(Cavity):
         if not np.isnan(slop):
             chisum = 0
             for nn, yy in enumerate(iwf):
-                chisum += (yy - (slop * iwf[nn] + inter)) ** 2 / (slop * iwf[nn] + inter)
+                chisum += (yy - (slop * iwf[nn] + inter)) ** 2 / (
+                    slop * iwf[nn] + inter
+                )
 
             step = slop * MULT
             if abs(step) > MAX_STEP:
                 step = MAX_STEP * np.sign(step)
-                prefix = '\033[91m'
-                suffix = '\033[0m'
+                prefix = "\033[91m"
+                suffix = "\033[0m"
                 large_step = True
                 print(f"{prefix}Large step taken{suffix}")
             else:
-                prefix = ''
-                suffix = ''
+                prefix = ""
+                suffix = ""
             if startVal + step < -180:
                 step = step + 360
             elif startVal + step > 180:
