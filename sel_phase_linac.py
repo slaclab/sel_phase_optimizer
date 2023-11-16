@@ -5,6 +5,7 @@ from lcls_tools.common.pyepics_tools.pyepics_utils import PV
 from lcls_tools.superconducting.scLinac import (Cavity, CryoDict, Cryomodule,
                                                 Piezo, SSA, StepperTuner)
 from scipy import stats
+import time
 
 MAX_STEP = 5
 MULT = -51.0471
@@ -76,7 +77,9 @@ class SELCavity(Cavity):
             elif startVal + step > 180:
                 step = step - 360
 
-            print(f"{prefix}{self}{suffix}  step: {step:5.2f} chi^2: {chisum:.2g}")
+            timi = time.localtime()
+            current_time = time.strftime("%m/%d %H:%M ",timi)
+            print(f"{prefix}{current_time}{self}{suffix}  step: {step:5.2f} chi^2: {chisum:.2g}")
 
             self.sel_poff_pv.put(startVal + step)
             return large_step
