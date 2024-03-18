@@ -1,15 +1,11 @@
 import time
-from typing import Dict, Optional
+from typing import Optional
 
 import numpy as np
 from lcls_tools.common.controls.pyepics.utils import PV
-from lcls_tools.superconducting.scLinac import (
+from lcls_tools.superconducting.sc_linac import (
     Cavity,
-    CryoDict,
-    Cryomodule,
-    Piezo,
-    SSA,
-    StepperTuner,
+    Machine,
 )
 from scipy import stats
 
@@ -20,13 +16,10 @@ MULT = -51.0471
 class SELCavity(Cavity):
     def __init__(
         self,
-        cavityNum,
-        rackObject,
-        ssaClass=SSA,
-        stepperClass=StepperTuner,
-        piezoClass=Piezo,
+        cavity_num,
+        rack_object,
     ):
-        super().__init__(cavityNum, rackObject, ssaClass, stepperClass, piezoClass)
+        super().__init__(cavity_num=cavity_num, rack_object=rack_object)
         self._q_waveform_pv: Optional[PV] = None
         self._i_waveform_pv: Optional[PV] = None
         self._sel_poff_pv: Optional[PV] = None
@@ -103,4 +96,4 @@ class SELCavity(Cavity):
             print(f"{self} slope is NaN, skipping")
 
 
-SEL_CRYOMODULES: Dict[str, Cryomodule] = CryoDict(cavityClass=SELCavity)
+SEL_MACHINE: Machine = Machine(cavity_class=SELCavity)
