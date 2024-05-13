@@ -7,7 +7,7 @@ import numpy as np
 from scipy import stats
 
 from lcls_tools.common.controls.pyepics.utils import PV
-from lcls_tools.common.logger.logger import custom_logger
+from lcls_tools.common.logger.logger import custom_logger, FORMAT_STRING
 from lcls_tools.superconducting.sc_linac import (
     Cavity,
     Machine,
@@ -34,13 +34,8 @@ class SELCavity(Cavity):
         )
         os.makedirs(os.path.dirname(self.logfile), exist_ok=True)
 
-        self.file_handler = logging.FileHandler(self.logfile, mode="w")
-
-        formatter = logging.Formatter(
-            fmt="%(asctime)s %(levelname)-8s %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
-        self.file_handler.setFormatter(formatter)
+        self.file_handler = logging.FileHandler(self.logfile, mode="a")
+        self.file_handler.setFormatter(logging.Formatter(FORMAT_STRING))
         self.logger.addHandler(self.file_handler)
 
     @property
