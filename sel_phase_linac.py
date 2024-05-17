@@ -1,13 +1,17 @@
+import logging
+import os
 import time
 from typing import Optional
 
 import numpy as np
+from scipy import stats
+
 from lcls_tools.common.controls.pyepics.utils import PV
+from lcls_tools.common.logger.logger import custom_logger, FORMAT_STRING
 from lcls_tools.superconducting.sc_linac import (
     Cavity,
     Machine,
 )
-from scipy import stats
 
 MAX_STEP = 5
 MULT = -51.0471
@@ -23,6 +27,16 @@ class SELCavity(Cavity):
         self._q_waveform_pv: Optional[PV] = None
         self._i_waveform_pv: Optional[PV] = None
         self._sel_poff_pv: Optional[PV] = None
+
+        self.logger = custom_logger(f"{self} SEL Phase Opt Logger")
+        self.logfile = (
+            f"logfiles/cm{self.cryomodule.name}/{self.number}_sel_phase_opt.log"
+        )
+        os.makedirs(os.path.dirname(self.logfile), exist_ok=True)
+
+        self.file_handler = logging.FileHandler(self.logfile, mode="a")
+        self.file_handler.setFormatter(logging.Formatter(FORMAT_STRING))
+        self.logger.addHandler(self.file_handler)
 
     @property
     def sel_poff_pv(self) -> PV:
@@ -74,7 +88,7 @@ class SELCavity(Cavity):
                 prefix = "\033[91m"
                 suffix = "\033[0m"
                 large_step = True
-                print(f"{prefix}Large step taken{suffix}")
+                self.logger.warning(f"{prefix}Large step taken{suffix}")
             else:
                 prefix = ""
                 suffix = ""
@@ -85,7 +99,7 @@ class SELCavity(Cavity):
 
             timi = time.localtime()
             current_time = time.strftime("%m/%d %H:%M ", timi)
-            print(
+            self.logger.info(
                 f"{prefix}{current_time}{self}{suffix}  step: {step:5.2f} chi^2: {chisum:.2g}"
             )
 
@@ -93,7 +107,7 @@ class SELCavity(Cavity):
             return large_step
 
         else:
-            print(f"{self} slope is NaN, skipping")
+            self.logger.warning(f"{self} slope is NaN, skipping")
 
 
 SEL_MACHINE: Machine = Machine(cavity_class=SELCavity)
